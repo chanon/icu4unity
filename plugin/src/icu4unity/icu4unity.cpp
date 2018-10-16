@@ -1,6 +1,6 @@
 #include "unity_interface.h"
 
-extern "C" int UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetNumber()
+extern "C" int UNITY_EXPORT GetNumber()
 {
 	return 109;
 }

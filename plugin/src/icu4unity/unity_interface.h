@@ -71,11 +71,13 @@ THE SOFTWARE.
     #define UNITY_INTERFACE_EXPORT __declspec(dllexport)
 #elif defined(__MACH__) || defined(__ANDROID__) || defined(__linux__)
     #define UNITY_INTERFACE_API
-    #define UNITY_INTERFACE_EXPORT
+    #define UNITY_INTERFACE_EXPORT __attribute__ ((visibility ("default"))) 
 #else
     #define UNITY_INTERFACE_API
-    #define UNITY_INTERFACE_EXPORT
+    #define UNITY_INTERFACE_EXPORT __attribute__ ((visibility ("default"))) 
 #endif
+
+#define UNITY_EXPORT UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // IUnityInterface is a registry of interfaces we choose to expose to plugins.
