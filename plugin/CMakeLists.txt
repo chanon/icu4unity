@@ -1,12 +1,12 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.12)
 
 if(${TARGET_PLATFORM} STREQUAL iOS)
     set(CMAKE_TOOLCHAIN_FILE cmake/iOS.cmake)
 endif()
 
 if(${TARGET_PLATFORM} STREQUAL Android)
-    set(ANDROID_NDK $ENV{ANDROID_NDK_ROOT})
-    set(CMAKE_TOOLCHAIN_FILE cmake/android.toolchain.cmake)
+    set(CMAKE_ANDROID_NDK $ENV{ANDROID_NDK_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_ANDROID_NDK}/build/cmake/android.toolchain.cmake)
 endif()
 
 set(PROJ icu4unity)
@@ -69,6 +69,8 @@ if(${TARGET_PLATFORM} STREQUAL iOS)
 endif()
 
 if(${TARGET_PLATFORM} STREQUAL Android)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_BASE}/${TARGET_PLATFORM}/libs/${ANDROID_ABI})
+    add_compile_definitions(UNITY_ANDROID=1)
+    set(CMAKE_SYSTEM_VERSION 16)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_BASE}/${TARGET_PLATFORM}/libs/${CMAKE_ANDROID_ABI})
     add_library(${PROJ} SHARED ${sources})    
 endif()
