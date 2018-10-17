@@ -12,9 +12,11 @@ endif()
 set(PROJ icu4unity)
 project(${PROJ})
 
-#include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src/freetype/include)
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src/icu4c-63_1/source/common)
 
-#add_definitions(-DFT2_BUILD_LIBRARY)
+add_definitions(-DU_CHARSET_IS_UTF8=1)
+add_definitions(-DU_COMMON_IMPLEMENTATION)
+add_definitions(-DU_STATIC_IMPLEMENTATION)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fvisibility=hidden")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -Wno-shorten-64-to-32")
@@ -24,31 +26,12 @@ if(${TARGET_PLATFORM} STREQUAL Android)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s")
 endif()
 
-#set(FREETYPE_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/freetype/src)
-#set(freetype_sources
-    #${FREETYPE_SOURCE}/autofit/autofit.c
-    #${FREETYPE_SOURCE}/base/ftbase.c
-    #${FREETYPE_SOURCE}/base/ftbitmap.c    
-#    ${FREETYPE_SOURCE}/base/ftglyph.c
-#    ${FREETYPE_SOURCE}/base/ftinit.c
-#    ${FREETYPE_SOURCE}/base/ftstroke.c
-#    ${FREETYPE_SOURCE}/base/ftsystem.c
-#    ${FREETYPE_SOURCE}/sfnt/sfnt.c
-#    ${FREETYPE_SOURCE}/smooth/smooth.c
-#    ${FREETYPE_SOURCE}/truetype/truetype.c
-#    ${FREETYPE_SOURCE}/psnames/psnames.c
-#    ${FREETYPE_SOURCE}/raster/raster.c
-#    ${FREETYPE_SOURCE}/cff/cff.c
-#    ${FREETYPE_SOURCE}/pshinter/pshinter.c
-#)
-
+file(GLOB icu4c_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/icu4c-63_1/source/common/*.cpp)
 file(GLOB_RECURSE icu4unity_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/icu4unity/*.cpp)
 
-# set(sources ${freetype_sources} ${unity-freetype_sources})
+set(sources ${icu4c_sources} ${icu4unity_sources} ${CMAKE_CURRENT_SOURCE_DIR}/src/icu4c-63_1/source/stubdata/stubdata.cpp)
 
-set(sources ${icu4unity_sources})
-
-set(OUTPUT_BASE ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+set(OUTPUT_BASE ${CMAKE_CURRENT_SOURCE_DIR}/../asset/Assets/Plugins/icu4unity)
 
 if(${TARGET_PLATFORM} STREQUAL macOS)
     set(CMAKE_OSX_ARCHITECTURES x86_64;i386)
@@ -61,6 +44,7 @@ if(${TARGET_PLATFORM} STREQUAL Windows)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_BASE}/x86_64)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_BASE}/x86_64)
     add_library(${PROJ} SHARED ${sources})    
+    # add_executable(${PROJ}_test ${sources})
 endif()
 
 if(${TARGET_PLATFORM} STREQUAL iOS)
