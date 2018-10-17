@@ -34,8 +34,9 @@ BRK_RES_ALIAS_SOURCE = $(BRK_RES_SYNTHETIC_ALIAS)
 
 
 # List of dictionary files (dict).
-BRK_DICT_SOURCE = burmesedict.txt cjdict.txt khmerdict.txt laodict.txt\
- thaidict.txt
+BRK_DICT_SOURCE = cjdict.txt thaidict.txt
+
+ # removed  burmesedict.txt khmerdict.txt laodict.txt
 
 
 # List of break iterator files (brk).
