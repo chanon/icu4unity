@@ -15,6 +15,8 @@ static bool m_loadedData = false;
 typedef void (*FuncPtr)(const char *);
 FuncPtr Debug;
 
+std::string m_output;
+
 extern "C"
 {
 	void UNITY_EXPORT ICU4USetDebugFunction(FuncPtr fp) { Debug = fp; }
@@ -28,6 +30,7 @@ extern "C"
 		if (U_SUCCESS(m_result))
 		{
 			m_loadedData = true;
+			m_output.reserve(1024);
 			Debug("ICU4U: Set ICU data successful");
 			return true;
 		}
@@ -42,6 +45,7 @@ extern "C"
 		Debug(path);
 		u_setDataDirectory(path);
 		m_loadedData = true;
+		m_output.reserve(1024);
 	}
 
 	bool UNITY_EXPORT ICU4UIsDataLoaded()
@@ -90,7 +94,7 @@ extern "C"
 		}
 	}
 
-	void UNITY_EXPORT ICU4UInsertLineBreaks(char *inOutString, int bufferLength, int breakCharacter)
+	void UNITY_EXPORT ICU4UInsertLineBreaks(char *inOutString, int breakCharacter)
 	{
 		if (!m_loadedData)
 		{
@@ -102,14 +106,9 @@ extern "C"
 			Debug("ICU4U: BreakIterator not created");
 			return;
 		}
-		if (bufferLength >= 1024)
-		{
-			Debug("ICU4U: Buffer length reaching 1024");
-			return;
-		}
 
-		//Debug("beginning line break for:");
-		//Debug(inOutString);
+		Debug("beginning line break for:");
+		Debug(inOutString);
 
 		// prepare icu::UnicodeString
 		icu::UnicodeString icuString(inOutString);
@@ -121,10 +120,9 @@ extern "C"
 		int32_t currPos = m_breakIterator->first();
 		char *currTarget = inOutString;
 
-		std::string output;
-		output.reserve(bufferLength);
+		m_output = "";
 
-		while (currPos < icuString.length() && currPos < bufferLength)
+		while (currPos < icuString.length() && currPos < 1023)
 		{
 			int32_t begin = currPos;
 			m_breakIterator->next();
@@ -138,24 +136,29 @@ extern "C"
 			icuString.extract(begin, length, target);
 
 			// append next word to output
-			target.toUTF8String(output);
+			target.toUTF8String(m_output);
 
 			// if last char wasn't whitespace and we are not at last position, then add the breakCharacter
-			char lastChar = output[output.length() - 1];
+			char lastChar = m_output[m_output.length() - 1];
 			if (lastChar != ' ' && lastChar != '\n' && currPos != icuString.length())
 			{
-				output += breakCharacter;
+				m_output += breakCharacter;
 			}
 		}
 
-		//Debug("result is:");
-		//Debug(output.c_str());
+		Debug("result is:");
+		Debug(m_output.c_str());
 
 		// copy result back out
-		if (output.length() < bufferLength)
+		if (m_output.length() < 1023)
 		{
-			//Debug("copying result out");
-			strcpy(inOutString, output.c_str());
+			Debug("copying result out");
+			strcpy(inOutString, m_output.c_str());
+		}
+		else {
+			char text[100];
+			sprintf(text, "length was too long to copy: %d >= %d", m_output.length(), 1023);
+			Debug(text);
 		}
 	}
 }

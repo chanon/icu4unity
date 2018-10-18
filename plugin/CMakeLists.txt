@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.12)
 
 if(${TARGET_PLATFORM} STREQUAL iOS)
-    set(CMAKE_TOOLCHAIN_FILE cmake/iOS.cmake)
+    # set(CMAKE_TOOLCHAIN_FILE cmake/iOS.cmake)
+    set(CMAKE_TOOLCHAIN_FILE cmake/ios.toolchain.cmake)
 endif()
 
 if(${TARGET_PLATFORM} STREQUAL Android)
     set(CMAKE_ANDROID_NDK $ENV{ANDROID_NDK_ROOT})
+    set(CMAKE_OSX_DEVELOPMENT_TARGET 9.0)
+    set(IOS_PLATFORM OS)
     set(CMAKE_TOOLCHAIN_FILE ${CMAKE_ANDROID_NDK}/build/cmake/android.toolchain.cmake)
 endif()
 
@@ -48,8 +51,11 @@ if(${TARGET_PLATFORM} STREQUAL Windows)
 endif()
 
 if(${TARGET_PLATFORM} STREQUAL iOS)
+    add_definitions(-DIOS_PLATFORM=OS)
+    add_definitions(-DIOS_DEPLOYMENT_TARGET=${CMAKE_OSX_DEVELOPMENT_TARGET})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_BASE}/${TARGET_PLATFORM})
     add_library(${PROJ} STATIC ${sources})
+    set_xcode_property(${PROJ} IPHONEOS_DEPLOYMENT_TARGET "${CMAKE_OSX_DEVELOPMENT_TARGET}" "All")
 endif()
 
 if(${TARGET_PLATFORM} STREQUAL Android)

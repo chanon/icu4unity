@@ -2,3 +2,4 @@ bin
 build_windows
 build_android
 build_macos
+build_ios
