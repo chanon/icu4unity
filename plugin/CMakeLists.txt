@@ -34,10 +34,15 @@ add_definitions(-DUCONFIG_NO_REGULAR_EXPRESSIONS=1)
 #add_definitions(-DU_HIDE_SYSTEM_API)  
 #add_definitions(-DU_HIDE_OBSOLETE_API)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -f")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32")
 
 if(${TARGET_PLATFORM} STREQUAL Android)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s")
+endif()
+
+if(${TARGET_PLATFORM} STREQUAL iOS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s")
 endif()

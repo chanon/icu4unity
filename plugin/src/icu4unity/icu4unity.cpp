@@ -144,12 +144,14 @@ extern "C"
 			icuWord.toUTF8String(m_output);
 
 			// if last char wasn't whitespace and we are not at last position, then add the breakCharacter
-			if (currPos > 0) {
-				int lastChar = icuInput.charAt(currPos-1);
+			if (currPos > 0)
+			{
+				int lastChar = icuInput.charAt(currPos - 1);
 				if (lastChar != ' ' && lastChar != '\n' && lastChar != L'\u200B' && lastChar != breakCharacter && currPos != icuInput.length())
 				{
 					int nextChar = icuInput.charAt(currPos);
-					if (nextChar != breakCharacter) {
+					if (nextChar != breakCharacter)
+					{
 						icuBreakCharacter.toUTF8String(m_output);
 					}
 				}
@@ -166,38 +168,39 @@ extern "C"
 
 // for testing when built as executable
 /*
-
 static void print(const char *text)
 {
 	printf(text);
 	printf("\n");
 }
 
-static void test(const char *text)
+static void gotResult(const char *text, int reqNo)
 {
-	char buffer[1024];
-	strcpy(buffer, text);
-	int sizeExample = strlen(text) * 2;
+	printf("result:\n");
+	printf(text);
+}
+
+static void test(char *text)
+{
 	printf("\n");
 	printf("input:\n");
-	printf(buffer);
+	printf(text);
 	printf("\n");
-	ICU4UInsertLineBreaks(buffer, sizeExample, ':');
-	printf("result:\n");
-	printf(buffer);
+	ICU4UInsertLineBreaks(text, 1, ':');
 }
 
 void main()
 {
 	Debug = print;
+	ReturnString = gotResult;
 	char *path = "../../../StreamingAssets/icudt63l.dat";
+*/
+//*
 
-	//*
+//	// can either use path
+//	ICU4USetICUDataPath(path);
 
-	// can either use path
-	ICU4USetICUDataPath(path);
-
-	/*/
+/*/
 
 /*
 	// or load buffer
@@ -213,7 +216,6 @@ void main()
 
 	ICU4USetICUData(buffer);
 	//*/
-
 /*
 	ICU4USetLocale("en");
 	// english
