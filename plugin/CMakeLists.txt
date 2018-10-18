@@ -21,8 +21,8 @@ add_definitions(-DU_CHARSET_IS_UTF8=1)
 add_definitions(-DU_COMMON_IMPLEMENTATION)
 add_definitions(-DU_STATIC_IMPLEMENTATION)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fvisibility=hidden")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -Wno-shorten-64-to-32")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -f")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32")
 
 if(${TARGET_PLATFORM} STREQUAL Android)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s")
