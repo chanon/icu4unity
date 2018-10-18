@@ -13,6 +13,7 @@ public class ICU4UnityWordBreaker : MonoBehaviour {
 	}
 
 	void Update() {
-		text.text = ICU4Unity.instance.InsertLineBreaks("ทดสอบภาษาไทยนะครับ", '|');
+		text.text = ICU4Unity.instance.InsertLineBreaks("ทดสอบภาษาไทยนะครับ มัยตัดถูกไหม and english also-ok", '|');
+		text.text = ICU4Unity.instance.InsertLineBreaks(text.text);
 	}
 }
