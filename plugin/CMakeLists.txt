@@ -34,7 +34,7 @@ set(sources ${icu4c_sources} ${icu4unity_sources} ${CMAKE_CURRENT_SOURCE_DIR}/sr
 set(OUTPUT_BASE ${CMAKE_CURRENT_SOURCE_DIR}/../asset/Assets/Plugins/icu4unity)
 
 if(${TARGET_PLATFORM} STREQUAL macOS)
-    set(CMAKE_OSX_ARCHITECTURES x86_64;i386)
+    set(CMAKE_OSX_ARCHITECTURES x86_64)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_BASE}/${TARGET_PLATFORM})
     add_library(${PROJ} MODULE ${sources})
     set_target_properties(${PROJ} PROPERTIES BUNDLE TRUE)
