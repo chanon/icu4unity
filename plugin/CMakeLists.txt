@@ -60,7 +60,7 @@ if(${TARGET_PLATFORM} STREQUAL Windows)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_BASE}/x86_64)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_BASE}/x86_64)
     add_library(${PROJ} SHARED ${sources})    
-    add_executable(${PROJ}_test ${sources})
+    # add_executable(${PROJ}_test ${sources})
 endif()
 
 if(${TARGET_PLATFORM} STREQUAL iOS)
