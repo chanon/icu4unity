@@ -12,14 +12,19 @@ static bool m_loadedData = false;
 ////////////////////////
 
 // for debug
-typedef void (*FuncPtr)(const char *);
-FuncPtr Debug;
+typedef void (*DebugFuncPtr)(const char *);
+DebugFuncPtr Debug;
+
+// for debug
+typedef void (*ReturnStringFuncPtr)(const char *, int);
+ReturnStringFuncPtr ReturnString;
 
 std::string m_output;
 
 extern "C"
 {
-	void UNITY_EXPORT ICU4USetDebugFunction(FuncPtr fp) { Debug = fp; }
+	void UNITY_EXPORT ICU4USetDebugFunction(DebugFuncPtr fp) { Debug = fp; }
+	void UNITY_EXPORT ICU4USetReturnStringFunction(ReturnStringFuncPtr fp) { ReturnString = fp; }
 
 	bool UNITY_EXPORT ICU4USetICUData(const char *bytes)
 	{
@@ -41,8 +46,8 @@ extern "C"
 
 	void UNITY_EXPORT ICU4USetICUDataPath(const char *path)
 	{
-		Debug("ICU4U: Setting ICU data path to:");
-		Debug(path);
+		//Debug("ICU4U: Setting ICU data path to:");
+		//Debug(path);
 		u_setDataDirectory(path);
 		m_loadedData = true;
 		m_output.reserve(1024);
@@ -94,7 +99,7 @@ extern "C"
 		}
 	}
 
-	void UNITY_EXPORT ICU4UInsertLineBreaks(char *inOutString, int breakCharacter)
+	void UNITY_EXPORT ICU4UInsertLineBreaks(char *text, int reqNo, int breakCharacter)
 	{
 		if (!m_loadedData)
 		{
@@ -107,22 +112,22 @@ extern "C"
 			return;
 		}
 
-		Debug("beginning line break for:");
-		Debug(inOutString);
+		//Debug("beginning line break for:");
+		//Debug(text);
 
 		// prepare icu::UnicodeString
-		icu::UnicodeString icuString(inOutString);
+		icu::UnicodeString icuInput(text);
+		icu::UnicodeString icuBreakCharacter;
+		icuBreakCharacter.append(breakCharacter);
 
 		// set text for break iterator
-		m_breakIterator->setText(icuString);
+		m_breakIterator->setText(icuInput);
 
 		// get words one at a time and put them into the inOutString, with dashes
 		int32_t currPos = m_breakIterator->first();
-		char *currTarget = inOutString;
-
 		m_output = "";
 
-		while (currPos < icuString.length() && currPos < 1023)
+		while (currPos < icuInput.length())
 		{
 			int32_t begin = currPos;
 			m_breakIterator->next();
@@ -132,34 +137,30 @@ extern "C"
 			int32_t length = end - begin;
 
 			// extract next word
-			icu::UnicodeString target;
-			icuString.extract(begin, length, target);
+			icu::UnicodeString icuWord;
+			icuInput.extract(begin, length, icuWord);
 
 			// append next word to output
-			target.toUTF8String(m_output);
+			icuWord.toUTF8String(m_output);
 
 			// if last char wasn't whitespace and we are not at last position, then add the breakCharacter
-			char lastChar = m_output[m_output.length() - 1];
-			if (lastChar != ' ' && lastChar != '\n' && currPos != icuString.length())
-			{
-				m_output += breakCharacter;
+			if (currPos > 0) {
+				int lastChar = icuInput.charAt(currPos-1);
+				if (lastChar != ' ' && lastChar != '\n' && lastChar != L'\u200B' && lastChar != breakCharacter && currPos != icuInput.length())
+				{
+					int nextChar = icuInput.charAt(currPos);
+					if (nextChar != breakCharacter) {
+						icuBreakCharacter.toUTF8String(m_output);
+					}
+				}
 			}
 		}
 
-		Debug("result is:");
-		Debug(m_output.c_str());
+		//Debug("result is:");
+		//Debug(m_output.c_str());
 
-		// copy result back out
-		if (m_output.length() < 1023)
-		{
-			Debug("copying result out");
-			strcpy(inOutString, m_output.c_str());
-		}
-		else {
-			char text[100];
-			sprintf(text, "length was too long to copy: %d >= %d", m_output.length(), 1023);
-			Debug(text);
-		}
+		// sending result back:
+		ReturnString(m_output.c_str(), reqNo);
 	}
 }
 
