@@ -98,13 +98,15 @@
 /** The possible types of text boundaries.  @stable ICU 2.0 */
 typedef enum UBreakIteratorType {
   /** Character breaks  @stable ICU 2.0 */
-  UBRK_CHARACTER = 0,
+  //UBRK_CHARACTER = 0,
   /** Word breaks @stable ICU 2.0 */
-  UBRK_WORD = 1,
+  //UBRK_WORD = 1,
   /** Line breaks @stable ICU 2.0 */
-  UBRK_LINE = 2,
+  //UBRK_LINE = 2,
   /** Sentence breaks @stable ICU 2.0 */
-  UBRK_SENTENCE = 3,
+  //UBRK_SENTENCE = 3,
+
+  UBRK_LINE = 0
 
 #ifndef U_HIDE_DEPRECATED_API
   /**
@@ -115,12 +117,12 @@ typedef enum UBreakIteratorType {
    *
    * @deprecated ICU 2.8 Use the word break iterator for titlecasing for Unicode 4 and later.
    */
-  UBRK_TITLE = 4,
+  ///UBRK_TITLE = 4,
     /**
      * One more than the highest normal UBreakIteratorType value.
      * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
-    UBRK_COUNT = 5
+    //UBRK_COUNT = 5
 #endif  // U_HIDE_DEPRECATED_API
 } UBreakIteratorType;
 

@@ -1,3 +1,5 @@
+// icu4unity: modified to have only bare necessities for line breaking
+
 // © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
@@ -29,7 +31,7 @@
 #include "unicode/udata.h"
 #include "unicode/ures.h"
 #include "unicode/ustring.h"
-#include "unicode/filteredbrk.h"
+//#include "unicode/filteredbrk.h"
 #include "ucln_cmn.h"
 #include "cstring.h"
 #include "umutex.h"
@@ -141,11 +143,13 @@ BreakIterator::buildInstance(const Locale& loc, const char *type, UErrorCode &st
 }
 
 // Creates a break iterator for word breaks.
+/*
 BreakIterator* U_EXPORT2
 BreakIterator::createWordInstance(const Locale& key, UErrorCode& status)
 {
     return createInstance(key, UBRK_WORD, status);
 }
+*/
 
 // -------------------------------------
 
@@ -159,6 +163,7 @@ BreakIterator::createLineInstance(const Locale& key, UErrorCode& status)
 // -------------------------------------
 
 // Creates a break iterator  for character breaks.
+/*
 BreakIterator* U_EXPORT2
 BreakIterator::createCharacterInstance(const Locale& key, UErrorCode& status)
 {
@@ -182,6 +187,7 @@ BreakIterator::createTitleInstance(const Locale& key, UErrorCode& status)
 {
     return createInstance(key, UBRK_TITLE, status);
 }
+*/
 
 // -------------------------------------
 
@@ -323,6 +329,7 @@ hasService(void)
 
 // -------------------------------------
 
+/*
 URegistryKey U_EXPORT2
 BreakIterator::registerInstance(BreakIterator* toAdopt, const Locale& locale, UBreakIteratorType kind, UErrorCode& status)
 {
@@ -347,9 +354,11 @@ BreakIterator::unregister(URegistryKey key, UErrorCode& status)
     }
     return FALSE;
 }
+*/
 
 // -------------------------------------
 
+/*
 StringEnumeration* U_EXPORT2
 BreakIterator::getAvailableLocales(void)
 {
@@ -359,7 +368,9 @@ BreakIterator::getAvailableLocales(void)
     }
     return service->getAvailableLocales();
 }
+*/
 #endif /* UCONFIG_NO_SERVICE */
+
 
 // -------------------------------------
 
@@ -411,12 +422,14 @@ BreakIterator::makeInstance(const Locale& loc, int32_t kind, UErrorCode& status)
 
     BreakIterator *result = NULL;
     switch (kind) {
+        /*
     case UBRK_CHARACTER:
         result = BreakIterator::buildInstance(loc, "grapheme", status);
         break;
     case UBRK_WORD:
         result = BreakIterator::buildInstance(loc, "word", status);
         break;
+        */
     case UBRK_LINE:
         uprv_strcpy(lbType, "line");
         {
@@ -430,6 +443,7 @@ BreakIterator::makeInstance(const Locale& loc, int32_t kind, UErrorCode& status)
         }
         result = BreakIterator::buildInstance(loc, lbType, status);
         break;
+        /*
     case UBRK_SENTENCE:
         result = BreakIterator::buildInstance(loc, "sentence", status);
 #if !UCONFIG_NO_FILTERED_BREAK_ITERATION
@@ -450,6 +464,7 @@ BreakIterator::makeInstance(const Locale& loc, int32_t kind, UErrorCode& status)
     case UBRK_TITLE:
         result = BreakIterator::buildInstance(loc, "title", status);
         break;
+        */
     default:
         status = U_ILLEGAL_ARGUMENT_ERROR;
     }
@@ -461,6 +476,7 @@ BreakIterator::makeInstance(const Locale& loc, int32_t kind, UErrorCode& status)
     return result;
 }
 
+/*
 Locale
 BreakIterator::getLocale(ULocDataLocaleType type, UErrorCode& status) const {
     U_LOCALE_BASED(locBased, *this);
@@ -472,7 +488,7 @@ BreakIterator::getLocaleID(ULocDataLocaleType type, UErrorCode& status) const {
     U_LOCALE_BASED(locBased, *this);
     return locBased.getLocaleID(type, status);
 }
-
+*/
 
 // This implementation of getRuleStatus is a do-nothing stub, here to
 // provide a default implementation for any derived BreakIterator classes that

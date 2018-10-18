@@ -1,3 +1,5 @@
+// icu4unity: modified to have only bare necessities for line breaking
+
 // © 2016 and later: Unicode, Inc. and others.
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
@@ -148,7 +150,7 @@ public:
      * Return a CharacterIterator over the text being analyzed.
      * @stable ICU 2.0
      */
-    virtual CharacterIterator& getText(void) const = 0;
+    //virtual CharacterIterator& getText(void) const = 0;
 
 
     /**
@@ -165,7 +167,7 @@ public:
       *           UText was provided, it will always be returned.
       * @stable ICU 3.4
       */
-     virtual UText *getUText(UText *fillIn, UErrorCode &status) const = 0;
+    //virtual UText *getUText(UText *fillIn, UErrorCode &status) const = 0;
 
     /**
      * Change the text over which this operates. The text boundary is
@@ -198,7 +200,7 @@ public:
      * @param status receives any error codes.
      * @stable ICU 3.4
      */
-    virtual void  setText(UText *text, UErrorCode &status) = 0;
+    //virtual void  setText(UText *text, UErrorCode &status) = 0;
 
     /**
      * Change the text over which this operates. The text boundary is
@@ -208,7 +210,7 @@ public:
      * @param it The CharacterIterator used to change the text.
      * @stable ICU 2.0
      */
-    virtual void  adoptText(CharacterIterator* it) = 0;
+    //virtual void  adoptText(CharacterIterator* it) = 0;
 
     enum {
         /**
@@ -361,8 +363,8 @@ public:
      * The caller owns the returned object and is responsible for deleting it.
      * @stable ICU 2.0
      */
-    static BreakIterator* U_EXPORT2
-    createWordInstance(const Locale& where, UErrorCode& status);
+    //static BreakIterator* U_EXPORT2
+    //createWordInstance(const Locale& where, UErrorCode& status);
 
     /**
      * Create BreakIterator for line-breaks using specified locale.
@@ -407,8 +409,8 @@ public:
      * The caller owns the returned object and is responsible for deleting it.
      * @stable ICU 2.0
      */
-    static BreakIterator* U_EXPORT2
-    createCharacterInstance(const Locale& where, UErrorCode& status);
+    //static BreakIterator* U_EXPORT2
+    //createCharacterInstance(const Locale& where, UErrorCode& status);
 
     /**
      * Create BreakIterator for sentence-breaks using specified locale
@@ -428,8 +430,8 @@ public:
      * The caller owns the returned object and is responsible for deleting it.
      * @stable ICU 2.0
      */
-    static BreakIterator* U_EXPORT2
-    createSentenceInstance(const Locale& where, UErrorCode& status);
+    //static BreakIterator* U_EXPORT2
+    //createSentenceInstance(const Locale& where, UErrorCode& status);
 
     /**
      * Create BreakIterator for title-casing breaks using the specified locale
@@ -453,8 +455,8 @@ public:
      * The caller owns the returned object and is responsible for deleting it.
      * @stable ICU 2.1
      */
-    static BreakIterator* U_EXPORT2
-    createTitleInstance(const Locale& where, UErrorCode& status);
+    //static BreakIterator* U_EXPORT2
+    //createTitleInstance(const Locale& where, UErrorCode& status);
 
     /**
      * Get the set of Locales for which TextBoundaries are installed.
@@ -510,9 +512,9 @@ public:
      *
      * @deprecated ICU 52. Use clone() instead.
      */
-    virtual BreakIterator *  createBufferClone(void *stackBuffer,
-                                               int32_t &BufferSize,
-                                               UErrorCode &status) = 0;
+    //virtual BreakIterator *  createBufferClone(void *stackBuffer,
+                                               //int32_t &BufferSize,
+                                               //UErrorCode &status) = 0;
 
 #ifndef U_HIDE_DEPRECATED_API
 
@@ -542,10 +544,10 @@ public:
      * @return a registry key that can be used to unregister this instance
      * @stable ICU 2.4
      */
-    static URegistryKey U_EXPORT2 registerInstance(BreakIterator* toAdopt,
-                                        const Locale& locale,
-                                        UBreakIteratorType kind,
-                                        UErrorCode& status);
+    //static URegistryKey U_EXPORT2 registerInstance(BreakIterator* toAdopt,
+                                        //const Locale& locale,
+                                        //UBreakIteratorType kind,
+                                        //UErrorCode& status);
 
     /**
      * Unregister a previously-registered BreakIterator using the key returned from the
@@ -559,7 +561,7 @@ public:
      * @return TRUE if the iterator for the key was successfully unregistered
      * @stable ICU 2.4
      */
-    static UBool U_EXPORT2 unregister(URegistryKey key, UErrorCode& status);
+    //static UBool U_EXPORT2 unregister(URegistryKey key, UErrorCode& status);
 
     /**
      * Return a StringEnumeration over the locales available at the time of the call,
@@ -567,7 +569,7 @@ public:
      * @return a StringEnumeration over the locales available at the time of the call
      * @stable ICU 2.4
      */
-    static StringEnumeration* U_EXPORT2 getAvailableLocales(void);
+    //static StringEnumeration* U_EXPORT2 getAvailableLocales(void);
 #endif
 
     /**
@@ -575,7 +577,7 @@ public:
      * actual locale.
      * @stable ICU 2.8
      */
-    Locale getLocale(ULocDataLocaleType type, UErrorCode& status) const;
+    //Locale getLocale(ULocDataLocaleType type, UErrorCode& status) const;
 
 #ifndef U_HIDE_INTERNAL_API
     /** Get the locale for this break iterator object. You can choose between valid and actual locale.
@@ -584,7 +586,7 @@ public:
      *  @return the locale
      *  @internal
      */
-    const char *getLocaleID(ULocDataLocaleType type, UErrorCode& status) const;
+    //const char *getLocaleID(ULocDataLocaleType type, UErrorCode& status) const;
 #endif  /* U_HIDE_INTERNAL_API */
 
     /**
@@ -612,7 +614,7 @@ public:
      *
      * @stable ICU 49
      */
-    virtual BreakIterator &refreshInputText(UText *input, UErrorCode &status) = 0;
+    //virtual BreakIterator &refreshInputText(UText *input, UErrorCode &status) = 0;
 
  private:
     static BreakIterator* buildInstance(const Locale& loc, const char *type, UErrorCode& status);
