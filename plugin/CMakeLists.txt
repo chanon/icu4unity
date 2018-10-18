@@ -21,6 +21,19 @@ add_definitions(-DU_CHARSET_IS_UTF8=1)
 add_definitions(-DU_COMMON_IMPLEMENTATION)
 add_definitions(-DU_STATIC_IMPLEMENTATION)
 
+add_definitions(-DUCONFIG_NO_LEGACY_CONVERSION=1)
+add_definitions(-DUCONFIG_ONLY_HTML_CONVERSION=1)
+add_definitions(-DUCONFIG_NO_COLLATION=1)
+add_definitions(-DUCONFIG_NO_FORMATTING=1)
+add_definitions(-DUCONFIG_NO_TRANSLITERATION=1)
+add_definitions(-DUCONFIG_NO_REGULAR_EXPRESSIONS=1)
+
+#add_definitions(-DU_HIDE_DEPRECATED_API)
+#add_definitions(-DU_HIDE_DRAFT_API)
+#add_definitions(-DU_HIDE_INTERNAL_API)
+#add_definitions(-DU_HIDE_SYSTEM_API)  
+#add_definitions(-DU_HIDE_OBSOLETE_API)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -f")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32")
 
@@ -47,7 +60,7 @@ if(${TARGET_PLATFORM} STREQUAL Windows)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_BASE}/x86_64)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_BASE}/x86_64)
     add_library(${PROJ} SHARED ${sources})    
-    # add_executable(${PROJ}_test ${sources})
+    add_executable(${PROJ}_test ${sources})
 endif()
 
 if(${TARGET_PLATFORM} STREQUAL iOS)
