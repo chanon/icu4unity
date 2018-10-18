@@ -13,9 +13,9 @@ You can now bring that same line breaking ability to your Unity game with __icu4
 * Chinese
 * Japanese
 * Thai
+* All other languages except Kmer, Laos and Burmese
 
 Kmer, Laos and Burmese can be added by rebuilding the ICU data files to include their dictionaries.
-For other languages it should also work correctly.
 
 # Platforms Supported
 Tested on:
@@ -34,15 +34,14 @@ A workaround for Android so it doesn't require 4MB of memory would be to copy th
 
 ## Code size
 * For Windows the dll file is about 1MB
-* For Android the .so files are currently about 2.2MB
-* For iOS the .a file is currently 20+ MB !
-
-I will need to remove unused code from ICU4C build to reduce the code size.
+* For macOS the bundle size is about 1.5MB
+* For Android the .so files are about 1.7MB
+* For iOS the .a file is about 8MB, actual contribution to final executable size should be a lot less
 
 # Todo
-* Reduce code size
 * Document how to use
 * Create example project
 
 # License
+Author: Chanon Sajjamanochai
 See LICENSE.md
