@@ -1,3 +1,7 @@
+# icu4untiy changes notes
+# - armv7s has been removed
+# - Release has been changed to -Os
+
 # This file is part of the ios-cmake project. It was retrieved from
 # https://github.com/cristeab/ios-cmake.git, which is a fork of
 # https://code.google.com/p/ios-cmake/. Which in turn is based off of
@@ -139,7 +143,8 @@ set(IOS_PLATFORM ${IOS_PLATFORM} CACHE STRING
 if (IOS_PLATFORM STREQUAL "OS")
   set(XCODE_IOS_PLATFORM iphoneos)
   if(NOT IOS_ARCH)
-    set(IOS_ARCH armv7 armv7s arm64)
+    # set(IOS_ARCH armv7 armv7s arm64)
+    set(IOS_ARCH armv7 arm64)
   endif()
  elseif (IOS_PLATFORM STREQUAL "OS64")
   set(XCODE_IOS_PLATFORM iphoneos)
@@ -389,7 +394,7 @@ set(CMAKE_CXX_FLAGS
 "${XCODE_IOS_PLATFORM_VERSION_FLAGS} ${BITCODE} ${VISIBILITY} -fvisibility-inlines-hidden -fobjc-abi-version=2 ${FOBJC_ARC} ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS} -DNDEBUG -Os -ffast-math ${BITCODE} ${CMAKE_CXX_FLAGS_MINSIZEREL}")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS} -DNDEBUG -O2 -g -ffast-math ${BITCODE} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG -O3 -ffast-math ${BITCODE} ${CMAKE_CXX_FLAGS_RELEASE}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG -Os -ffast-math ${BITCODE} ${CMAKE_CXX_FLAGS_RELEASE}")
 set(CMAKE_C_LINK_FLAGS "${XCODE_IOS_PLATFORM_VERSION_FLAGS} -Wl,-search_paths_first ${CMAKE_C_LINK_FLAGS}")
 set(CMAKE_CXX_LINK_FLAGS "${XCODE_IOS_PLATFORM_VERSION_FLAGS}  -Wl,-search_paths_first ${CMAKE_CXX_LINK_FLAGS}")
 
