@@ -27,8 +27,11 @@ Tested on:
 # Size Requirements
 
 ## Data file size
-* To use ICU4C, its data file must be included in the final app. The size is around 4MB.
-* Additionally for Android the whole file must be loaded into memory, using 4MB of memory. 
+To use ICU4C, its data file, icudt63l.dat, must be included in the final app in StreamingAssets. 
+
+The size is around 4.4MB and compresses to 2.4MB
+
+Additionally for Android the whole file must be loaded into memory, using 4MB of memory. 
 
 A workaround for Android so it doesn't require 4MB of memory would be to copy the data file out of the jar file into SD card. Then the path could be given to ICU4C. However I haven't implemented this yet.
 
@@ -36,7 +39,7 @@ A workaround for Android so it doesn't require 4MB of memory would be to copy th
 * For Windows the dll file is about 1MB
 * For macOS the bundle size is about 1.5MB
 * For Android the .so files are about 1.7MB
-* For iOS the .a file is about 8MB, actual contribution to final executable size should be a lot less
+* For iOS the .a file is about 8MB, actual contribution to final executable size is less than 1.5MB
 
 # Todo
 * Document how to use
