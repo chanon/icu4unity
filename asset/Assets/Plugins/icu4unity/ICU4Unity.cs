@@ -7,11 +7,15 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
+#if UNITY_IOS
+	using AOT;
+#endif
+
 public class ICU4Unity {
 
 	// setup libraryName
 
-#if (UNITY_IPHONE || UNITY_WEBGL) && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_WEBGL) && !UNITY_EDITOR
 	private const string libraryName = "__Internal";
 #else
 	private const string libraryName = "icu4unity";
@@ -22,6 +26,9 @@ public class ICU4Unity {
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	private delegate void DebugDelegate(string str);
 
+#if UNITY_IOS
+	[MonoPInvokeCallback(typeof(DebugDelegate))]
+#endif
 	private static void CallBackFunction(string str) { Debug.Log(str); }
 
 	[DllImport(libraryName)]
@@ -42,7 +49,7 @@ public class ICU4Unity {
 	private static extern bool ICU4USetLocale(string locale);
 
 	[DllImport(libraryName)]
-	private static extern void ICU4UInsertLineBreaks(StringBuilder chars, int bufferSize, int breakCharacter);
+	private static extern void ICU4UInsertLineBreaks([In, Out] StringBuilder chars, int breakCharacter);
 
 	// singleton / constructor
 
@@ -58,9 +65,13 @@ public class ICU4Unity {
 
 	private ICU4Unity() {
 		// setup debug 
-		DebugDelegate callbackDelegate = new DebugDelegate(CallBackFunction);
-		IntPtr intptrDelegate = Marshal.GetFunctionPointerForDelegate(callbackDelegate);
-		ICU4USetDebugFunction(intptrDelegate);
+		#if ENABLE_ILCPP
+			ICU4USetDebugFunction(CallBackFunction);
+		#else
+			DebugDelegate callbackDelegate = new DebugDelegate(CallBackFunction);
+			IntPtr intptrDelegate = Marshal.GetFunctionPointerForDelegate(callbackDelegate);
+			ICU4USetDebugFunction(intptrDelegate);
+		#endif
 	}
 
 	// public interface
@@ -179,7 +190,7 @@ public class ICU4Unity {
 		_builder.Append(text);
 
 		// send to have line breaks inserted
-		ICU4UInsertLineBreaks(_builder, _builder.Capacity, separator);
+		ICU4UInsertLineBreaks(_builder, separator);
 
 		// return new string
 		return _builder.ToString();
