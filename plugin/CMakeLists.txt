@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 if(${TARGET_PLATFORM} STREQUAL iOS)
+    set(IOS_PLATFORM OS)
     set(IOS_DEPLOYMENT_TARGET 9.0)
     set(CMAKE_OSX_DEPLOYMENT_TARGET ${IOS_DEPLOYMENT_TARGET})
     set(CMAKE_TOOLCHAIN_FILE cmake/ios.toolchain.cmake)
@@ -8,7 +9,6 @@ endif()
 
 if(${TARGET_PLATFORM} STREQUAL Android)
     set(CMAKE_ANDROID_NDK $ENV{ANDROID_NDK_ROOT})
-    set(IOS_PLATFORM OS)
     set(CMAKE_TOOLCHAIN_FILE ${CMAKE_ANDROID_NDK}/build/cmake/android.toolchain.cmake)
 endif()
 
@@ -78,7 +78,8 @@ endif()
 
 if(${TARGET_PLATFORM} STREQUAL Android)
     add_compile_definitions(UNITY_ANDROID=1)
-    set(CMAKE_SYSTEM_VERSION 16)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_BASE}/${TARGET_PLATFORM}/libs/${CMAKE_ANDROID_ABI})
+    set(ANDROID_PLATFORM 16)
+    set(CMAKE_SYSTEM_VERSION ${ANDROID_PLATFORM})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_BASE}/${TARGET_PLATFORM}/libs/${ANDROID_ABI})
     add_library(${PROJ} SHARED ${sources})    
 endif()

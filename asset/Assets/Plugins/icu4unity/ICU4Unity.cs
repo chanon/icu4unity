@@ -13,6 +13,9 @@ using System.Text;
 
 public class ICU4Unity {
 
+	///////////////////////////////////////////////////////////////////////////
+	// C++ <-> C# Interface
+
 	// setup libraryName
 
 #if (UNITY_IOS || UNITY_WEBGL) && !UNITY_EDITOR
@@ -64,6 +67,7 @@ public class ICU4Unity {
 	[DllImport(libraryName)]
 	private static extern void ICU4UInsertLineBreaks(string chars, int reqNo, int breakCharacter);
 
+	///////////////////////////////////////////////////////////////////////////
 	// singleton / constructor
 
 	private static ICU4Unity _instance = null;
@@ -78,47 +82,35 @@ public class ICU4Unity {
 
 	private ICU4Unity() {
 		// setup debug 
-		#if ENABLE_ILCPP
-			ICU4USetDebugFunction(DebugCallBackFunction);
-			ICU4USetReturnStringFunction(ReturnStringCallBackFunction);
-		#else
-			DebugDelegate callbackDelegate = new DebugDelegate(DebugCallBackFunction);
-			IntPtr intptrDelegate = Marshal.GetFunctionPointerForDelegate(callbackDelegate);
-			ICU4USetDebugFunction(intptrDelegate);
-
-			ReturnStringDelegate callbackDelegate2 = new ReturnStringDelegate(ReturnStringCallBackFunction);
-			IntPtr intptrDelegate2 = Marshal.GetFunctionPointerForDelegate(callbackDelegate2);
-			ICU4USetReturnStringFunction(intptrDelegate2);
-		#endif
-	}
-
-	// public interface
-
-	private byte[] _icudata;
-	private bool _icuDataLoadStarted = false;
-	private bool _icuDataLoaded = false;
-	private string _savedLocale = "";
-	private string _activeLocale = "";
-	private static Dictionary<int, string> _results = new Dictionary<int, string>();
-	private int _nextRequestNo = 1;
-
-	public bool icuDataIsLoaded {
-		get { return _icuDataLoaded; }
-	}
-
-	/// <summary>
-    /// Initialize ICU Data. Must be set before InsertLineBreaks will work. Eg. StartCoroutine(ICU4Unity.instance.InitData());
-    /// </summary>
-	public IEnumerator InitData() {
-#if UNITY_ANDROID && !UNITY_EDITOR
-		yield return LoadICUData();
+#if ENABLE_ILCPP
+		ICU4USetDebugFunction(DebugCallBackFunction);
+		ICU4USetReturnStringFunction(ReturnStringCallBackFunction);
 #else
-		SetICUDataDirectory();
-		yield break;
+		DebugDelegate callbackDelegate = new DebugDelegate(DebugCallBackFunction);
+		IntPtr intptrDelegate = Marshal.GetFunctionPointerForDelegate(callbackDelegate);
+		ICU4USetDebugFunction(intptrDelegate);
+
+		ReturnStringDelegate callbackDelegate2 = new ReturnStringDelegate(ReturnStringCallBackFunction);
+		IntPtr intptrDelegate2 = Marshal.GetFunctionPointerForDelegate(callbackDelegate2);
+		ICU4USetReturnStringFunction(intptrDelegate2);
+#endif
+
+		// load data
+		_InitData();
+
+		// default locale to en
+		SetLocale("en");
+	}
+
+	private void _InitData() {
+#if UNITY_ANDROID && !UNITY_EDITOR
+		LoadICUData();
+#else
+		_SetICUDataDirectory();
 #endif
 	}
 
-	private void SetICUDataDirectory() {
+	private void _SetICUDataDirectory() {
 		if (ICU4UIsDataLoaded()) {
 			_icuDataLoaded = true;
 			return;
@@ -129,14 +121,16 @@ public class ICU4Unity {
 		_icuDataLoaded = true;
 	}
 
-	private IEnumerator LoadICUData() {
+	UnityWebRequest _www;
+
+	private void _LoadICUData() {
 		if (ICU4UIsDataLoaded()) {
 			_icuDataLoaded = true;
-			yield break;
+			return;
 		}
 
 		if (_icuDataLoadStarted) {
-			yield break;
+			return;
 		}
 
 		_icuDataLoadStarted = true;
@@ -156,13 +150,17 @@ public class ICU4Unity {
 
 		// load ICU4C data
 		Debug.Log("ICU4C: Loading ICU4C data from: " + loadPath);
-		UnityWebRequest www = UnityWebRequest.Get(loadPath);
-		yield return www.SendWebRequest();
-		if (www.isNetworkError || www.isHttpError) {
-			Debug.Log(www.error);
+		_www = UnityWebRequest.Get(loadPath);
+		UnityWebRequestAsyncOperation result = _www.SendWebRequest();
+		result.completed += _OnLoadComplete;
+	}
+
+	private void _OnLoadComplete(AsyncOperation op) {
+		if (_www.isNetworkError || _www.isHttpError) {
+			Debug.Log(_www.error);
 		}
 		else {
-			_icudata = www.downloadHandler.data;
+			_icudata = _www.downloadHandler.data;
 			Debug.Log("ICU4U: Data loaded successfully");
 			ICU4USetICUData(_icudata);
 			Debug.Log("ICU4U: Data set successfully");
@@ -170,10 +168,32 @@ public class ICU4Unity {
 		}
 	}
 
+	///////////////////////////////////////////////////////////////////////////
+	// public interface implementation
+
+	private byte[] _icudata;
+	private bool _icuDataLoadStarted = false;
+	private bool _icuDataLoaded = false;
+	private string _savedLocale = "";
+	private string _activeLocale = "";
+	private static Dictionary<int, string> _results = new Dictionary<int, string>();
+	private int _nextRequestNo = 1;
+
+	public bool icuDataIsLoaded {
+		get {
+#if UNITY_EDITOR
+			if (ICU4UIsDataLoaded()) {
+				_icuDataLoaded = true;
+			}
+#endif
+			return _icuDataLoaded;
+		}
+	}
+
 	/// <summary>
-    /// Sets a locale to use. Must be set before InsertLineBreaks will work.
-    /// </summary>
-    /// <param locale="text">The locale, such as "en-US" or "th" to set.</param>
+	/// Sets a locale to use. Defaults to "en". Correct locale not actually needed for it to work.
+	/// </summary>
+	/// <param locale="text">The locale, such as "en-US" or "th" to set.</param>
 	public void SetLocale(string locale) {
 		if (_activeLocale != locale) {
 			_savedLocale = locale;
@@ -187,29 +207,33 @@ public class ICU4Unity {
 		}
 	}
 
-  	/// <summary>
-    /// Inserts Line Break characters into text with an optional separator for proper word wrapping of Asian text.
-    /// </summary>
-    /// <param name="text">The text to insert line breaks to.</param>
+	/// <summary>
+	/// Inserts Line Break characters into text with an optional separator for proper word wrapping of Asian text.
+	/// </summary>
+	/// <param name="text">The text to insert line breaks to.</param>
 	/// <param separator="text">The separator character to insert. Defaults to the 'Zero Width Space' unicode character.</param>
-    /// <returns>The text with separator character inserted at line break positions.</returns>
+	/// <returns>The text with separator character inserted at line break positions.</returns>
 	/// <remarks>
 	/// TextMeshPro supports the 'Zero Width Space' for line breaking / word wrapping.
 	/// However as of this writing, Unity UI Text does not.
 	/// </remarks>
 	public string InsertLineBreaks(string text, Char separator = '\u200B') {
 		// make sure locale is set
+		//Debug.Log("SetLocale");
 		SetLocale(_savedLocale);
 
 		if (_activeLocale != _savedLocale) {
+			//Debug.Log("not locale");
 			return text;
 		}
 
 		if (_activeLocale == "") {
+			//Debug.Log("not active locale");
 			return text;
 		}
 
 		if (!_icuDataLoaded) {
+			//Debug.Log("not loaded");
 			return text;
 		}
 

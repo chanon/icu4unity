@@ -143,18 +143,35 @@ extern "C"
 			// append next word to output
 			icuWord.toUTF8String(m_output);
 
-			// if last char wasn't whitespace and we are not at last position, then add the breakCharacter
+			// handle insert of break character
 			if (currPos > 0)
 			{
 				int lastChar = icuInput.charAt(currPos - 1);
-				if (lastChar != ' ' && lastChar != '\n' && lastChar != L'\u200B' && lastChar != breakCharacter && currPos != icuInput.length())
-				{
-					int nextChar = icuInput.charAt(currPos);
-					if (nextChar != breakCharacter)
-					{
-						icuBreakCharacter.toUTF8String(m_output);
-					}
-				}
+
+				// we won't do anything for normal ascii characters
+				bool lastWasAscii = lastChar < 128;
+
+				// ignore whitespace characters
+				if (lastChar == ' ' || lastChar == '\n' || lastChar == L'\u200B')
+					continue;
+
+				// ignore the breakCharacter and don't do it if we are at the end
+				if (lastChar == breakCharacter || currPos == icuInput.length())
+					continue;
+
+				int nextChar = icuInput.charAt(currPos);
+				bool nextIsAscii = nextChar < 128;
+
+				// don't do anything between normal ascii characters as textmeshpro can handle it
+				if (lastWasAscii && nextIsAscii)
+					continue;
+
+				// don't re-insert the breakCharacter
+				if (nextChar == breakCharacter)
+					continue;
+
+				// if we got here, then it is ok, append the break character
+				icuBreakCharacter.toUTF8String(m_output);
 			}
 		}
 
