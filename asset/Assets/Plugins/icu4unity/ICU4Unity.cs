@@ -104,7 +104,7 @@ public class ICU4Unity {
 
 	private void _InitData() {
 #if UNITY_ANDROID && !UNITY_EDITOR
-		LoadICUData();
+		_LoadICUData();
 #else
 		_SetICUDataDirectory();
 #endif
